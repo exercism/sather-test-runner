@@ -1,0 +1,14 @@
+-- A test that can only fail: the routine under test returns void, and no
+-- void value matches the expected string.
+
+class VOID_RESULT_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("VOID_RESULT");
+
+      test("one giant leap", VOID_RESULT::giant_leap, "One giant leap for mankind");
+
+      finish;
+   end;
+end; -- class VOID_RESULT_TEST

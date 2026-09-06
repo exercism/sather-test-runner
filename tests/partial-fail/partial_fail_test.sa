@@ -1,0 +1,18 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- two-fer variant.
+
+class PARTIAL_FAIL_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("PARTIAL_FAIL");
+
+      test("no name given", PARTIAL_FAIL::two_fer(void), "One for you, one for me.");
+
+      test("a name given", PARTIAL_FAIL::two_fer("Alice"), "One for Alice, one for me.");
+
+      test("another name given", PARTIAL_FAIL::two_fer("Bob"), "One for Bob, one for me.");
+
+      finish;
+   end;
+end; -- class PARTIAL_FAIL_TEST

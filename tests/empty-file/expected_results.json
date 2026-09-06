@@ -1,5 +1,5 @@
 {
-  "version": 1,
-  "status": "fail",
-  "message": "TODO: replace with correct output"
+  "version": 3,
+  "status": "error",
+  "message": "empty_file_test.sa:10:38: There is no class named EMPTY_FILE."
 }

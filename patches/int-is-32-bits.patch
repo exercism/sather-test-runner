@@ -1,0 +1,49 @@
+Define INT by width, not by platform name
+
+Sather's INT must be exactly 32 bits wide: Library/Base/int.sa declares
+'const asize:INT := 32', and INT::bcount, INT::lowest_bit and
+INT::highest_bit choose 32-bit implementations whenever asize=32 holds.
+System/Common/c_header.h chose 'typedef long INT' on everything except
+ALPHA, which was right when every non-ALPHA host had a 32-bit long; on
+an LP64 host it makes INT 64 bits wide while the library still believes
+asize=32, so bit routines return wrong answers and the runtime's
+'unsigned' casts truncate.
+
+The preprocessor cannot evaluate sizeof, so the type is picked by its
+range from <limits.h>, which c_header.h already includes. On every
+32- and 64-bit platform in current use the first branch is taken and
+INT is a 32-bit int.
+
+--- a/System/Common/c_header.h
++++ b/System/Common/c_header.h
+@@ -131,16 +131,28 @@
+ # define M_LOG2E             1.4426950408889634074
+ #endif
+ 
+-#ifdef ALPHA
++/* Sather's INT must be exactly 32 bits wide: Library/Base/int.sa declares
++** 'const asize:INT := 32' and INT::bcount, INT::lowest_bit and
++** INT::highest_bit run 32-bit implementations whenever asize=32 holds.
++** The original code chose 'long' except on ALPHA, which was correct when
++** every non-ALPHA host had a 32-bit long; on today's LP64 hosts it makes
++** INT 64 bits wide while the library still believes asize=32.
++**
++** sizeof cannot be evaluated by the preprocessor, so pick the type by its
++** range from <limits.h> (included above) instead of by platform name.
++*/
++#if INT_MAX == 2147483647
+ typedef int INT;
+ #define SUINT_MAX UINT_MAX
+ #define SINT_MAX INT_MAX
+ #define SINT_MIN INT_MIN
+-#else
++#elif LONG_MAX == 2147483647
+ typedef long INT;
+ #define SUINT_MAX ULONG_MAX
+ #define SINT_MAX LONG_MAX
+ #define SINT_MIN LONG_MIN
++#else
++#error "neither int nor long is a 32-bit type; Sather's INT needs one"
+ #endif
+ 
+ /* Layouts for the Sather classes which are built-in */

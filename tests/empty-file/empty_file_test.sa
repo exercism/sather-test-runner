@@ -1,0 +1,18 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- two-fer variant.
+
+class EMPTY_FILE_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("EMPTY_FILE");
+
+      test("no name given", EMPTY_FILE::two_fer(void), "One for you, one for me.");
+
+      test("a name given", EMPTY_FILE::two_fer("Alice"), "One for Alice, one for me.");
+
+      test("another name given", EMPTY_FILE::two_fer("Bob"), "One for Bob, one for me.");
+
+      finish;
+   end;
+end; -- class EMPTY_FILE_TEST

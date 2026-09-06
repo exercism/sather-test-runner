@@ -1,0 +1,29 @@
+Preprocess the compiler configuration in freestanding mode
+
+System/Common/Makefile produces System/Common/CONFIG by running $(CPP)
+over CONFIG.proto, which is a Sather configuration file, not C source.
+Since GCC 4.8 a hosted-mode preprocessor implicitly includes
+<stdc-predef.h> ahead of its input; with -C the comments in that header
+are preserved, so glibc's copyright banner lands at the head of the
+generated CONFIG and sacomp rejects its own configuration with
+
+    System/Common/CONFIG:1:error, expected an UID followed by a ':'
+
+-ffreestanding suppresses the implicit include and restores the
+original behaviour.
+
+--- a/Makefile
++++ b/Makefile
+@@ -30,7 +30,11 @@
+ LN=ln -sf
+ CP=cp
+ 
+-CPP=/lib/cpp -C -P
++# -ffreestanding stops the preprocessor implicitly including <stdc-predef.h>
++# (hosted-mode behaviour since GCC 4.8): with -C that header's comments would
++# be copied to the head of System/Common/CONFIG, which is a Sather
++# configuration file, and sacomp would reject its own configuration.
++CPP=/lib/cpp -C -P -ffreestanding
+ CC=gcc
+ EXEC_SUFFIX=
+ # CC is only used for bootstrapping, check System/Common/CONFIG.proto if

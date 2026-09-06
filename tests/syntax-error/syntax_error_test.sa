@@ -1,0 +1,18 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- two-fer variant.
+
+class SYNTAX_ERROR_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("SYNTAX_ERROR");
+
+      test("no name given", SYNTAX_ERROR::two_fer(void), "One for you, one for me.");
+
+      test("a name given", SYNTAX_ERROR::two_fer("Alice"), "One for Alice, one for me.");
+
+      test("another name given", SYNTAX_ERROR::two_fer("Bob"), "One for Bob, one for me.");
+
+      finish;
+   end;
+end; -- class SYNTAX_ERROR_TEST

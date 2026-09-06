@@ -1,0 +1,18 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- two-fer variant.
+
+class SUCCESS_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("SUCCESS");
+
+      test("no name given", SUCCESS::two_fer(void), "One for you, one for me.");
+
+      test("a name given", SUCCESS::two_fer("Alice"), "One for Alice, one for me.");
+
+      test("another name given", SUCCESS::two_fer("Bob"), "One for Bob, one for me.");
+
+      finish;
+   end;
+end; -- class SUCCESS_TEST

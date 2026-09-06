@@ -1,0 +1,12 @@
+class VOID_RESULT is
+
+   giant_leap : STR is
+      -- `words' is declared but never given a value, so the routine hands
+      -- back void. Nothing it could return would pass the test below; the
+      -- point of the case is that the harness reports the failure instead
+      -- of crashing in `does.str'.
+      words : STR;
+      return words;
+   end;
+
+end; -- class VOID_RESULT
