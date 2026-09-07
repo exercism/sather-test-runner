@@ -3,15 +3,19 @@
   "status": "pass",
   "tests": [
     {
-      "name": "no name given",
+      "name": "empty strands",
       "status": "pass"
     },
     {
-      "name": "a name given",
+      "name": "identical strands",
       "status": "pass"
     },
     {
-      "name": "another name given",
+      "name": "long different strands",
+      "status": "pass"
+    },
+    {
+      "name": "complete distance",
       "status": "pass"
     }
   ]

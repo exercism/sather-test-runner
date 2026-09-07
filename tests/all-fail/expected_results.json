@@ -3,19 +3,19 @@
   "status": "fail",
   "tests": [
     {
-      "name": "no name given",
+      "name": "a word",
       "status": "fail",
-      "message": "expected: One for you, one for me.\nactual:   "
+      "message": "expected: tobor\nactual:   robot"
     },
     {
-      "name": "a name given",
+      "name": "a capitalized word",
       "status": "fail",
-      "message": "expected: One for Alice, one for me.\nactual:   "
+      "message": "expected: nemaR\nactual:   Ramen"
     },
     {
-      "name": "another name given",
+      "name": "a sentence with punctuation",
       "status": "fail",
-      "message": "expected: One for Bob, one for me.\nactual:   "
+      "message": "expected: !yrgnuh m'I\nactual:   I'm hungry!"
     }
   ]
 }

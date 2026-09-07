@@ -1,5 +1,5 @@
 -- Test-runner scenario, maintained by hand; the exercise is a
--- two-fer variant.
+-- difference-of-squares variant.
 
 class SYNTAX_ERROR_TEST is
    include EXERCISM_TEST;
@@ -7,11 +7,9 @@ class SYNTAX_ERROR_TEST is
    main is
       class_name("SYNTAX_ERROR");
 
-      test("no name given", SYNTAX_ERROR::two_fer(void), "One for you, one for me.");
+      test("square of sum to 5", SYNTAX_ERROR::square_of_sum(5), 225);
 
-      test("a name given", SYNTAX_ERROR::two_fer("Alice"), "One for Alice, one for me.");
-
-      test("another name given", SYNTAX_ERROR::two_fer("Bob"), "One for Bob, one for me.");
+      test("square of sum to 10", SYNTAX_ERROR::square_of_sum(10), 3025);
 
       finish;
    end;

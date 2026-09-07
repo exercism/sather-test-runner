@@ -1,9 +1,8 @@
 class ALL_FAIL is
 
-   two_fer(name : STR) : STR is
-      -- Return "One for <name>, one for me.".
-      -- When `name' is void, use "you" instead.
-      return "";
+   reverse(s : STR) : STR is
+      -- Forgets to reverse: hands the string straight back.
+      return s;
    end;
 
 end; -- class ALL_FAIL

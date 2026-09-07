@@ -1,5 +1,5 @@
 {
   "version": 3,
   "status": "error",
-  "message": "empty_file_test.sa:10:38: There is no class named EMPTY_FILE."
+  "message": "empty_file_test.sa:11:48: There is no class named EMPTY_FILE."
 }

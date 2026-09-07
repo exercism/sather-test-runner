@@ -1,5 +1,5 @@
 -- Test-runner scenario, maintained by hand; the exercise is a
--- two-fer variant.
+-- raindrops variant.
 
 class PARTIAL_FAIL_TEST is
    include EXERCISM_TEST;
@@ -7,11 +7,13 @@ class PARTIAL_FAIL_TEST is
    main is
       class_name("PARTIAL_FAIL");
 
-      test("no name given", PARTIAL_FAIL::two_fer(void), "One for you, one for me.");
+      test("the sound for 3 is Pling", PARTIAL_FAIL::convert(3), "Pling");
 
-      test("a name given", PARTIAL_FAIL::two_fer("Alice"), "One for Alice, one for me.");
+      test("the sound for 5 is Plang", PARTIAL_FAIL::convert(5), "Plang");
 
-      test("another name given", PARTIAL_FAIL::two_fer("Bob"), "One for Bob, one for me.");
+      test("the sound for 28 is Plong", PARTIAL_FAIL::convert(28), "Plong");
+
+      test("the sound for 105 uses all three", PARTIAL_FAIL::convert(105), "PlingPlangPlong");
 
       finish;
    end;
