@@ -1,0 +1,13 @@
+class SUCCESS is
+
+   distance(a, b : STR) : INT is
+      -- The Hamming distance between two equal-length DNA strands.
+      d ::= 0;
+      loop
+         i ::= 0.upto!(a.size - 1);
+         if a[i] /= b[i] then d := d + 1 end;
+      end;
+      return d;
+   end;
+
+end; -- class SUCCESS

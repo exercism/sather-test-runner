@@ -1,0 +1,6 @@
+class SYNTAX_ERROR is
+
+   square_of_sum(n : INT) : INT is
+      s ::= n * (n + 1) / 2;
+      return s * s
+   -- missing 'end' for the routine and the class

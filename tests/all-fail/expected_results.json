@@ -1,5 +1,21 @@
 {
-  "version": 1,
+  "version": 3,
   "status": "fail",
-  "message": "TODO: replace with correct output"
+  "tests": [
+    {
+      "name": "a word",
+      "status": "fail",
+      "message": "expected: tobor\nactual:   robot"
+    },
+    {
+      "name": "a capitalized word",
+      "status": "fail",
+      "message": "expected: nemaR\nactual:   Ramen"
+    },
+    {
+      "name": "a sentence with punctuation",
+      "status": "fail",
+      "message": "expected: !yrgnuh m'I\nactual:   I'm hungry!"
+    }
+  ]
 }

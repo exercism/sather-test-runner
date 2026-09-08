@@ -1,4 +1,22 @@
 {
-  "version": 1,
-  "status": "pass"
+  "version": 3,
+  "status": "pass",
+  "tests": [
+    {
+      "name": "empty strands",
+      "status": "pass"
+    },
+    {
+      "name": "identical strands",
+      "status": "pass"
+    },
+    {
+      "name": "long different strands",
+      "status": "pass"
+    },
+    {
+      "name": "complete distance",
+      "status": "pass"
+    }
+  ]
 }

@@ -1,0 +1,16 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- difference-of-squares variant.
+
+class SYNTAX_ERROR_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("SYNTAX_ERROR");
+
+      test("square of sum to 5", SYNTAX_ERROR::square_of_sum(5), 225);
+
+      test("square of sum to 10", SYNTAX_ERROR::square_of_sum(10), 3025);
+
+      finish;
+   end;
+end; -- class SYNTAX_ERROR_TEST

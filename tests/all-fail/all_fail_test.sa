@@ -1,0 +1,18 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- reverse-string variant.
+
+class ALL_FAIL_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("ALL_FAIL");
+
+      test("a word", ALL_FAIL::reverse("robot"), "tobor");
+
+      test("a capitalized word", ALL_FAIL::reverse("Ramen"), "nemaR");
+
+      test("a sentence with punctuation", ALL_FAIL::reverse("I'm hungry!"), "!yrgnuh m'I");
+
+      finish;
+   end;
+end; -- class ALL_FAIL_TEST

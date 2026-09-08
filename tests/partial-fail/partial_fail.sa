@@ -1,0 +1,12 @@
+class PARTIAL_FAIL is
+
+   convert(n : INT) : STR is
+      -- Handles factors 3 and 5, but 7 was forgotten.
+      r ::= "";
+      if n % 3 = 0 then r := r + "Pling" end;
+      if n % 5 = 0 then r := r + "Plang" end;
+      if r.size = 0 then return n.str end;
+      return r;
+   end;
+
+end; -- class PARTIAL_FAIL

@@ -1,0 +1,21 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- leap variant. The solution file is empty, so the class under
+-- test does not exist.
+
+class EMPTY_FILE_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("EMPTY_FILE");
+
+      test("year not divisible by 4", EMPTY_FILE::leap_year(2015), false);
+
+      test("year divisible by 4", EMPTY_FILE::leap_year(1996), true);
+
+      test("year divisible by 100 but not 400", EMPTY_FILE::leap_year(2100), false);
+
+      test("year divisible by 400", EMPTY_FILE::leap_year(2000), true);
+
+      finish;
+   end;
+end; -- class EMPTY_FILE_TEST

@@ -1,0 +1,20 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- raindrops variant.
+
+class PARTIAL_FAIL_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("PARTIAL_FAIL");
+
+      test("the sound for 3 is Pling", PARTIAL_FAIL::convert(3), "Pling");
+
+      test("the sound for 5 is Plang", PARTIAL_FAIL::convert(5), "Plang");
+
+      test("the sound for 28 is Plong", PARTIAL_FAIL::convert(28), "Plong");
+
+      test("the sound for 105 uses all three", PARTIAL_FAIL::convert(105), "PlingPlangPlong");
+
+      finish;
+   end;
+end; -- class PARTIAL_FAIL_TEST

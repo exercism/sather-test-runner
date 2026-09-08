@@ -1,0 +1,23 @@
+class REGULAR_EXPRESSIONS is
+
+   is_postcode(s : STR) : BOOL is
+      -- Exactly four digits, as an Australian postcode.
+      return REGEXP::beginning
+                .pow(REGEXP::digit.between(4, 4))
+                .pow(REGEXP::ending)
+                .match(s);
+   end;
+
+   has_vowel(s : STR) : BOOL is
+      return REGEXP::oneof("aeiou").match(s);
+   end;
+
+   is_shouting(s : STR) : BOOL is
+      -- One or more capitals and nothing else.
+      return REGEXP::beginning
+                .pow(REGEXP::uppercase.atleast(1))
+                .pow(REGEXP::ending)
+                .match(s);
+   end;
+
+end; -- class REGULAR_EXPRESSIONS

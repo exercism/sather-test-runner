@@ -1,0 +1,34 @@
+{
+  "version": 3,
+  "status": "pass",
+  "tests": [
+    {
+      "name": "four digits form a postcode",
+      "status": "pass"
+    },
+    {
+      "name": "letters spoil a postcode",
+      "status": "pass"
+    },
+    {
+      "name": "five digits are too many",
+      "status": "pass"
+    },
+    {
+      "name": "sather has a vowel",
+      "status": "pass"
+    },
+    {
+      "name": "rhythm has none",
+      "status": "pass"
+    },
+    {
+      "name": "all capitals is shouting",
+      "status": "pass"
+    },
+    {
+      "name": "mixed case is not",
+      "status": "pass"
+    }
+  ]
+}

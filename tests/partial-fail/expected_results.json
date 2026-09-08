@@ -1,5 +1,24 @@
 {
-  "version": 1,
+  "version": 3,
   "status": "fail",
-  "message": "TODO: replace with correct output"
+  "tests": [
+    {
+      "name": "the sound for 3 is Pling",
+      "status": "pass"
+    },
+    {
+      "name": "the sound for 5 is Plang",
+      "status": "pass"
+    },
+    {
+      "name": "the sound for 28 is Plong",
+      "status": "fail",
+      "message": "expected: Plong\nactual:   28"
+    },
+    {
+      "name": "the sound for 105 uses all three",
+      "status": "fail",
+      "message": "expected: PlingPlangPlong\nactual:   PlingPlang"
+    }
+  ]
 }

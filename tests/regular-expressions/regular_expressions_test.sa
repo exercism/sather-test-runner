@@ -1,0 +1,27 @@
+-- Test-runner scenario, maintained by hand: a concept-style exercise
+-- built on the library's REGEXP class, so the runner proves regular
+-- expressions compile and match in the shipped toolchain.
+
+class REGULAR_EXPRESSIONS_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("REGULAR_EXPRESSIONS");
+
+      test("four digits form a postcode", REGULAR_EXPRESSIONS::is_postcode("2530"), true);
+
+      test("letters spoil a postcode", REGULAR_EXPRESSIONS::is_postcode("25a0"), false);
+
+      test("five digits are too many", REGULAR_EXPRESSIONS::is_postcode("25301"), false);
+
+      test("sather has a vowel", REGULAR_EXPRESSIONS::has_vowel("sather"), true);
+
+      test("rhythm has none", REGULAR_EXPRESSIONS::has_vowel("rhythm"), false);
+
+      test("all capitals is shouting", REGULAR_EXPRESSIONS::is_shouting("HEY"), true);
+
+      test("mixed case is not", REGULAR_EXPRESSIONS::is_shouting("Hey"), false);
+
+      finish;
+   end;
+end; -- class REGULAR_EXPRESSIONS_TEST

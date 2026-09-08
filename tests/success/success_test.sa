@@ -1,0 +1,20 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- hamming variant.
+
+class SUCCESS_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("SUCCESS");
+
+      test("empty strands", SUCCESS::distance("", ""), 0);
+
+      test("identical strands", SUCCESS::distance("GGACTGAA", "GGACTGAA"), 0);
+
+      test("long different strands", SUCCESS::distance("GGACGGATTCTG", "AGGACGGATTCT"), 9);
+
+      test("complete distance", SUCCESS::distance("ACT", "GGA"), 3);
+
+      finish;
+   end;
+end; -- class SUCCESS_TEST
