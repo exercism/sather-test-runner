@@ -78,11 +78,12 @@ die() {
 }
 
 # capped <file>: copy at most MAX_MESSAGE_BYTES of a capture to stdout,
-# noting the cut. Not a command substitution on purpose: $(...) eats
-# trailing newlines, which loses the cut marker's own line.
+# noting the cut. Callers redirect this into a file, which is what jq's
+# --rawfile reads to build the message.
 capped() {
-    head -c "${MAX_MESSAGE_BYTES}" "$1"
-    if (( $(wc -c < "$1") > MAX_MESSAGE_BYTES )); then
+    local file="$1"
+    head -c "${MAX_MESSAGE_BYTES}" "${file}"
+    if (( $(wc -c < "${file}") > MAX_MESSAGE_BYTES )); then
         printf '\n[output truncated]'
     fi
 }
