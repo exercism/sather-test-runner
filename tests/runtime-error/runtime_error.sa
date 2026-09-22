@@ -1,0 +1,23 @@
+class RUNTIME_ERROR is
+
+   find(haystack : ARRAY{INT}, needle : INT) : INT is
+      -- The upper bound starts one past the last element, so the search
+      -- can probe haystack[haystack.size]. Every needle in the array is
+      -- still found, and a needle below or between the elements still
+      -- raises correctly; only a needle above the largest element drives
+      -- `mid' off the end. Compiled with -chk, that is a runtime error
+      -- that ends the program.
+      low ::= 0;
+      high ::= haystack.size;
+      loop
+         until!(low > high);
+         mid ::= low + (high - low) / 2;
+         if haystack[mid] = needle then return mid
+         elsif haystack[mid] < needle then low := mid + 1
+         else high := mid - 1
+         end;
+      end;
+      raise "value not in array";
+   end;
+
+end; -- class RUNTIME_ERROR

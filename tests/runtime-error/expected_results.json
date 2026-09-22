@@ -1,0 +1,27 @@
+{
+  "version": 3,
+  "status": "fail",
+  "message": "the test program stopped before the suite finished; later tests did not run\n\nRuntime error - Out of bounds\n(Use \"-debug\" to compile symbolic info)\ntimeout: the monitored command dumped core",
+  "tests": [
+    {
+      "name": "finds a value in an array with one element",
+      "status": "pass"
+    },
+    {
+      "name": "finds a value in the middle of an array",
+      "status": "pass"
+    },
+    {
+      "name": "finds a value at the end of an array",
+      "status": "pass"
+    },
+    {
+      "name": "identifies that a value is not included in the array",
+      "status": "pass"
+    },
+    {
+      "name": "a value smaller than the array's smallest value is not found",
+      "status": "pass"
+    }
+  ]
+}

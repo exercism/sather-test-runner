@@ -1,0 +1,20 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- scrabble-score variant. The solution crashes while the program is
+-- still starting up, so no test is ever reported: the runner must return
+-- an error carrying the runtime error text rather than an empty pass.
+
+class CRASH_BEFORE_TESTS_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("CRASH_BEFORE_TESTS");
+
+      test("lowercase letter", CRASH_BEFORE_TESTS::score("a"), 1);
+
+      test("short, valuable word", CRASH_BEFORE_TESTS::score("zoo"), 12);
+
+      test("entire alphabet available", CRASH_BEFORE_TESTS::score("abcdefghijklmnopqrstuvwxyz"), 87);
+
+      finish;
+   end;
+end; -- class CRASH_BEFORE_TESTS_TEST

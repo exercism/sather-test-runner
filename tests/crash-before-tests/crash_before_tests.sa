@@ -1,0 +1,36 @@
+class CRASH_BEFORE_TESTS is
+
+   -- A shared attribute's initialiser runs when the program starts,
+   -- before main: the failure while building this table happens before
+   -- the harness has named the class or run a single test.
+   private shared values : ARRAY{INT} := letter_values;
+
+   private letter_values : ARRAY{INT} is
+      -- One entry per letter, indexed by position in the alphabet.
+      v ::= #ARRAY{INT}(26);
+      assign(v, "AEIOULNRST", 1);
+      assign(v, "DG", 2);
+      assign(v, "BCMP", 3);
+      assign(v, "FHVWY", 4);
+      assign(v, "K", 5);
+      assign(v, "JX", 8);
+      assign(v, "Qz", 10);
+      return v;
+   end;
+
+   private assign(v : ARRAY{INT}, letters : STR, points : INT)
+      -- The letters must be upper case, or they miss the table; the
+      -- lower-case typo above trips this precondition.
+      pre letters.is_upper
+   is
+      loop v[letters.elt!.int - 'A'.int] := points end;
+   end;
+
+   score(word : STR) : INT is
+      if void(word) then return 0 end;
+      total ::= 0;
+      loop total := total + values[word.elt!.upper.int - 'A'.int] end;
+      return total;
+   end;
+
+end; -- class CRASH_BEFORE_TESTS

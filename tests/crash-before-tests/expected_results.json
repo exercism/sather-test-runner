@@ -1,0 +1,5 @@
+{
+  "version": 3,
+  "status": "error",
+  "message": "Runtime error - Violation of precondition\nin CRASH_BEFORE_TESTS::assign(ARRAY{INT},STR,INT)\ncrash_before_tests.sa:21:17\n(Use \"-debug\" to compile symbolic info)\ntimeout: the monitored command dumped core"
+}
