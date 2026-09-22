@@ -1,0 +1,55 @@
+-- Test-runner scenario, maintained by hand; the exercise is a
+-- binary-search variant. The first five tests pass, the sixth dies with
+-- a runtime error, and the last never runs: the runner must report the
+-- tests that did run and say that the suite stopped early.
+
+class RUNTIME_ERROR_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("RUNTIME_ERROR");
+
+      haystack_b55c24a9 : ARRAY{INT} := |6|;
+      test("finds a value in an array with one element", RUNTIME_ERROR::find(haystack_b55c24a9, 6), 0);
+
+      haystack_73469346 : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;
+      test("finds a value in the middle of an array", RUNTIME_ERROR::find(haystack_73469346, 6), 3);
+
+      haystack_f9f94b16 : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;
+      test("finds a value at the end of an array", RUNTIME_ERROR::find(haystack_f9f94b16, 11), 6);
+
+      haystack_da7db20a : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;
+      protect
+         ignored ::= RUNTIME_ERROR::find(haystack_da7db20a, 7);
+         test("identifies that a value is not included in the array", "no exception raised", "value not in array");
+      when $STR then
+         test("identifies that a value is not included in the array", exception.str, "value not in array");
+      end;
+
+      haystack_95d869ff : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;
+      protect
+         ignored ::= RUNTIME_ERROR::find(haystack_95d869ff, 0);
+         test("a value smaller than the array's smallest value is not found", "no exception raised", "value not in array");
+      when $STR then
+         test("a value smaller than the array's smallest value is not found", exception.str, "value not in array");
+      end;
+
+      haystack_8b24ef45 : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;
+      protect
+         ignored ::= RUNTIME_ERROR::find(haystack_8b24ef45, 13);
+         test("a value larger than the array's largest value is not found", "no exception raised", "value not in array");
+      when $STR then
+         test("a value larger than the array's largest value is not found", exception.str, "value not in array");
+      end;
+
+      haystack_f439a0fa : ARRAY{INT} := #ARRAY{INT}(0);
+      protect
+         ignored ::= RUNTIME_ERROR::find(haystack_f439a0fa, 1);
+         test("nothing is found in an empty array", "no exception raised", "value not in array");
+      when $STR then
+         test("nothing is found in an empty array", exception.str, "value not in array");
+      end;
+
+      finish;
+   end;
+end; -- class RUNTIME_ERROR_TEST
