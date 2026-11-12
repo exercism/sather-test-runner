@@ -1,0 +1,23 @@
+class TRAM_FARES is
+
+   zone_fare(zone : INT) : INT is
+      case zone
+      when 0 then return 0;          -- the Free Tram Zone
+      when 1 then return 550;
+      when 2 then return 370;
+      else return 0;                 -- not a tram zone at all
+      end;
+   end;
+
+   ticket_kind(code : CHAR) : STR is
+      -- Planted defect: students ('s') were left off the concession arm,
+      -- so their tickets fall through to "Unknown".
+      case code
+      when 'f' then return "Full fare";
+      when 'c' then return "Concession";
+      when 'x' then return "Free pass";
+      else return "Unknown";
+      end;
+   end;
+
+end; -- class TRAM_FARES

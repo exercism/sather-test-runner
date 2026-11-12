@@ -1,27 +1,43 @@
 {
   "version": 3,
   "status": "fail",
-  "message": "the test program stopped before the suite finished; later tests did not run\n\nRuntime error - Out of bounds\n(Use \"-debug\" to compile symbolic info)\ntimeout: the monitored command dumped core",
   "tests": [
     {
       "name": "finds a value in an array with one element",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "haystack_b55c24a9 : ARRAY{INT} := |6|;\ntest(\"finds a value in an array with one element\", RUNTIME_ERROR::find(haystack_b55c24a9, 6), 0);"
     },
     {
       "name": "finds a value in the middle of an array",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "haystack_73469346 : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;\ntest(\"finds a value in the middle of an array\", RUNTIME_ERROR::find(haystack_73469346, 6), 3);"
     },
     {
       "name": "finds a value at the end of an array",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "haystack_f9f94b16 : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;\ntest(\"finds a value at the end of an array\", RUNTIME_ERROR::find(haystack_f9f94b16, 11), 6);"
     },
     {
       "name": "identifies that a value is not included in the array",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "haystack_da7db20a : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;\nprotect\n   ignored ::= RUNTIME_ERROR::find(haystack_da7db20a, 7);\n   test(\"identifies that a value is not included in the array\", \"no exception raised\", \"value not in array\");\nwhen $STR then\n   test(\"identifies that a value is not included in the array\", exception.str, \"value not in array\");\nend;"
     },
     {
       "name": "a value smaller than the array's smallest value is not found",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "haystack_95d869ff : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;\nprotect\n   ignored ::= RUNTIME_ERROR::find(haystack_95d869ff, 0);\n   test(\"a value smaller than the array's smallest value is not found\", \"no exception raised\", \"value not in array\");\nwhen $STR then\n   test(\"a value smaller than the array's smallest value is not found\", exception.str, \"value not in array\");\nend;"
+    },
+    {
+      "name": "a value larger than the array's largest value is not found",
+      "status": "error",
+      "message": "The test program stopped while running this test; later tests did not run.\n\nRuntime error - Out of bounds\n(Use \"-debug\" to compile symbolic info)\ntimeout: the monitored command dumped core",
+      "test_code": "haystack_8b24ef45 : ARRAY{INT} := |1, 3, 4, 6, 8, 9, 11|;\nprotect\n   ignored ::= RUNTIME_ERROR::find(haystack_8b24ef45, 13);\n   test(\"a value larger than the array's largest value is not found\", \"no exception raised\", \"value not in array\");\nwhen $STR then\n   test(\"a value larger than the array's largest value is not found\", exception.str, \"value not in array\");\nend;"
+    },
+    {
+      "name": "nothing is found in an empty array",
+      "status": "error",
+      "message": "Not run: an earlier test stopped the test program.",
+      "test_code": "haystack_f439a0fa : ARRAY{INT} := #ARRAY{INT}(0);\nprotect\n   ignored ::= RUNTIME_ERROR::find(haystack_f439a0fa, 1);\n   test(\"nothing is found in an empty array\", \"no exception raised\", \"value not in array\");\nwhen $STR then\n   test(\"nothing is found in an empty array\", exception.str, \"value not in array\");\nend;"
     }
   ]
 }

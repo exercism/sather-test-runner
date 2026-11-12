@@ -4,19 +4,23 @@
   "tests": [
     {
       "name": "empty strands",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"empty strands\", SUCCESS::distance(\"\", \"\"), 0);"
     },
     {
       "name": "identical strands",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"identical strands\", SUCCESS::distance(\"GGACTGAA\", \"GGACTGAA\"), 0);"
     },
     {
       "name": "long different strands",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"long different strands\", SUCCESS::distance(\"GGACGGATTCTG\", \"AGGACGGATTCT\"), 9);"
     },
     {
       "name": "complete distance",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"complete distance\", SUCCESS::distance(\"ACT\", \"GGA\"), 3);"
     }
   ]
 }

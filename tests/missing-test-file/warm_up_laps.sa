@@ -1,0 +1,26 @@
+class WARM_UP_LAPS is
+
+   distance_run(laps : INT) : INT is
+      total ::= 0;
+      lap ::= 1;
+      loop
+         -- At the top, so that nought laps runs the body no times.
+         until!(lap > laps);
+         total := total + 90 + 10 * lap;
+         lap := lap + 1;
+      end;
+      return total;
+   end;
+
+   laps_to_reach(metres : INT) : INT is
+      total ::= 0;
+      lap ::= 0;
+      loop
+         until!(total >= metres);
+         lap := lap + 1;
+         total := total + 90 + 10 * lap;
+      end;
+      return lap;
+   end;
+
+end; -- class WARM_UP_LAPS

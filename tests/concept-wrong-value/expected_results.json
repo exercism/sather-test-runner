@@ -1,0 +1,43 @@
+{
+  "version": 3,
+  "status": "fail",
+  "tests": [
+    {
+      "name": "the free tram zone",
+      "status": "pass",
+      "test_code": "test(\"the free tram zone\", TRAM_FARES::zone_fare(0), 0);",
+      "task_id": 1
+    },
+    {
+      "name": "zone one",
+      "status": "pass",
+      "test_code": "test(\"zone one\", TRAM_FARES::zone_fare(1), 550);",
+      "task_id": 1
+    },
+    {
+      "name": "no such zone",
+      "status": "pass",
+      "test_code": "test(\"no such zone\", TRAM_FARES::zone_fare(7), 0);",
+      "task_id": 1
+    },
+    {
+      "name": "a full fare",
+      "status": "pass",
+      "test_code": "test(\"a full fare\", TRAM_FARES::ticket_kind('f'), \"Full fare\");",
+      "task_id": 2
+    },
+    {
+      "name": "a student",
+      "status": "fail",
+      "message": "expected: Concession\nactual:   Unknown",
+      "test_code": "test(\"a student\", TRAM_FARES::ticket_kind('s'), \"Concession\");",
+      "task_id": 2
+    },
+    {
+      "name": "an unreadable ticket",
+      "status": "pass",
+      "test_code": "test(\"an unreadable ticket\",\n     TRAM_FARES::ticket_kind('q'), \"Unknown\");",
+      "task_id": 2
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "version": 3,
+  "status": "fail",
+  "tests": [
+    {
+      "name": "the rating is remembered",
+      "status": "pass",
+      "test_code": "harness ::= #SAFETY_HARNESS(120);\ntest(\"the rating is remembered\", harness.limit, 120);",
+      "task_id": 1
+    },
+    {
+      "name": "the second rating is its own",
+      "status": "pass",
+      "test_code": "light ::= #SAFETY_HARNESS(50);\ntest(\"the second rating is its own\", light.limit, 50);",
+      "task_id": 1
+    },
+    {
+      "name": "spare with a load on",
+      "status": "pass",
+      "test_code": "test(\"spare with a load on\", harness.spare_capacity(40), 80);",
+      "task_id": 2
+    },
+    {
+      "name": "and its spare capacity follows it",
+      "status": "error",
+      "message": "The test program stopped while running this test; later tests did not run.\n\nRuntime error - Failed invariant SAFETY_HARNESS::invariant:BOOL\nin SAFETY_HARNESS::spare_capacity(INT):INT\nsafety_harness.sa:23:17\n(Use \"-debug\" to compile symbolic info)\ntimeout: the monitored command dumped core",
+      "test_code": "test(\"and its spare capacity follows it\",\n     light.spare_capacity(20), 30);",
+      "task_id": 2
+    },
+    {
+      "name": "half used",
+      "status": "error",
+      "message": "Not run: an earlier test stopped the test program.",
+      "test_code": "test(\"half used\", harness.percent_used(60), 50);",
+      "task_id": 3
+    },
+    {
+      "name": "all used",
+      "status": "error",
+      "message": "Not run: an earlier test stopped the test program.",
+      "test_code": "test(\"all used\", harness.percent_used(120), 100);",
+      "task_id": 3
+    }
+  ]
+}

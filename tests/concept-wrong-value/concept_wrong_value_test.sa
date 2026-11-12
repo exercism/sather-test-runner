@@ -1,0 +1,25 @@
+-- Test-runner scenario, maintained by hand; based on the track's tram-fares
+-- concept exercise, cut down to two tasks. Task 1 is solved; the final task
+-- returns a wrong value for one case, which must be reported as a failure
+-- under task 2 while its other tests pass.
+
+class CONCEPT_WRONG_VALUE_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("TRAM_FARES");
+
+      -- Task 1
+      test("the free tram zone", TRAM_FARES::zone_fare(0), 0);
+      test("zone one", TRAM_FARES::zone_fare(1), 550);
+      test("no such zone", TRAM_FARES::zone_fare(7), 0);
+
+      -- Task 2
+      test("a full fare", TRAM_FARES::ticket_kind('f'), "Full fare");
+      test("a student", TRAM_FARES::ticket_kind('s'), "Concession");
+      test("an unreadable ticket",
+           TRAM_FARES::ticket_kind('q'), "Unknown");
+
+      finish;
+   end;
+end; -- class CONCEPT_WRONG_VALUE_TEST

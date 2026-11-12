@@ -1,0 +1,36 @@
+-- Test-runner scenario, maintained by hand; based on the track's
+-- lost-property concept exercise, cut down to four tasks. waiting leaves
+-- out a negation, and its postcondition stops the program in the first
+-- task-3 test. Every later test, through task 4, must still be listed, as
+-- not run.
+
+class CONCEPT_POSTCONDITION_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("LOST_BOX");
+
+      -- Task 1
+      box ::= #LOST_BOX{STR}("blue jumper", "Mia");
+      test("what is in the box", box.item, "blue jumper");
+      test("nobody has claimed it", box.claimed, false);
+
+      other ::= #LOST_BOX{STR}("water bottle", "Lee");
+
+      -- Task 2
+      box.claim;
+      test("now it is claimed", box.claimed, true);
+      test("and its own claimed state", other.claimed, false);
+
+      -- Task 3
+      test("so it is no longer waiting", box.waiting, false);
+      test("so it is still waiting", other.waiting, true);
+
+      -- Task 4
+      was ::= box.replace("red jumper");
+      test("replace answers what was there", was, "blue jumper");
+      test("and the box holds the new thing", box.item, "red jumper");
+
+      finish;
+   end;
+end; -- class CONCEPT_POSTCONDITION_TEST

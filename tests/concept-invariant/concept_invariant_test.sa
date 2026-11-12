@@ -1,0 +1,32 @@
+-- Test-runner scenario, maintained by hand; based on the track's
+-- safety-harness concept exercise, cut down to three tasks. The class
+-- invariant demands a rating of at least 100kg, which the 50kg harness
+-- from task 1 breaks. Attribute reads are not checked, so the failure
+-- surfaces in task 2, the first time a routine is called on that harness;
+-- task 3 must still be listed, as not run.
+
+class CONCEPT_INVARIANT_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("SAFETY_HARNESS");
+
+      -- Task 1
+      harness ::= #SAFETY_HARNESS(120);
+      test("the rating is remembered", harness.limit, 120);
+
+      light ::= #SAFETY_HARNESS(50);
+      test("the second rating is its own", light.limit, 50);
+
+      -- Task 2
+      test("spare with a load on", harness.spare_capacity(40), 80);
+      test("and its spare capacity follows it",
+           light.spare_capacity(20), 30);
+
+      -- Task 3
+      test("half used", harness.percent_used(60), 50);
+      test("all used", harness.percent_used(120), 100);
+
+      finish;
+   end;
+end; -- class CONCEPT_INVARIANT_TEST

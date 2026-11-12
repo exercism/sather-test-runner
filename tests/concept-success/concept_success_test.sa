@@ -1,0 +1,42 @@
+-- Test-runner scenario, maintained by hand; based on the track's bush-walk
+-- concept exercise, cut down to two tasks. Every test passes, and each is
+-- linked to its task. Each test builds its value in a loop first: that
+-- setup belongs in the test's test_code.
+
+class CONCEPT_SUCCESS_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("BUSH_WALK");
+
+      -- Task 1
+      markers ::= #FSTR;
+      loop markers := markers + BUSH_WALK::markers!(100, 3) + " "; end;
+      test("three markers a hundred apart",
+           markers.str, "100 200 300 ");
+
+      none ::= #FSTR;
+      loop none := none + BUSH_WALK::markers!(100, 0) + " "; end;
+      test("no markers at all", none.str, "");
+
+      -- Task 2
+      stopped ::= #FSTR;
+      loop
+         stopped := stopped
+            + BUSH_WALK::until_end!(|"gum", "wattle", "end", "banksia"|)
+            + " ";
+      end;
+      test("stops at the end and does not give it",
+           stopped.str, "gum wattle ");
+
+      no_end ::= #FSTR;
+      loop
+         no_end := no_end
+            + BUSH_WALK::until_end!(|"gum", "wattle"|) + " ";
+      end;
+      test("gives everything when there is no end",
+           no_end.str, "gum wattle ");
+
+      finish;
+   end;
+end; -- class CONCEPT_SUCCESS_TEST

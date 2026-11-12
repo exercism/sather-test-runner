@@ -1,0 +1,19 @@
+class BUSH_WALK is
+
+   markers!(once spacing : INT, once count : INT) : INT is
+      loop
+         -- 1.upto!(0) gives nothing, so a count of nought ends this at once.
+         yield spacing * 1.upto!(count);
+      end;
+   end;
+
+   until_end!(once seen : ARRAY{STR}) : STR is
+      loop
+         sighting ::= seen.elt!;
+         -- Before the yield, or "end" would be handed over first.
+         if sighting = "end" then quit; end;
+         yield sighting;
+      end;
+   end;
+
+end; -- class BUSH_WALK

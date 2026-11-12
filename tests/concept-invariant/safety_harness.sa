@@ -1,0 +1,39 @@
+class SAFETY_HARNESS is
+
+   readonly attr limit : INT;
+
+   invariant : BOOL is
+      -- Checked on entry to and exit from every public routine. On entry
+      -- to create there is no harness yet and self is void, which reading
+      -- limit would not survive.
+      -- Planted defect: an imagined minimum rating of 100kg, which the
+      -- 50kg harness created in task 1 breaks.
+      return void(self) or limit >= 100;
+   end;
+
+   create(kg : INT) : SAME
+      -- A harness rated for nothing is not a harness.
+      pre kg > 0
+   is
+      harness ::= new;
+      harness.limit := kg;
+      return harness;
+   end;
+
+   spare_capacity(load : INT) : INT
+      pre load >= 0 and load <= limit
+      -- Follows from the pre, and records why the answer can be trusted.
+      post result >= 0
+   is
+      return limit - load;
+   end;
+
+   percent_used(load : INT) : INT
+      pre load >= 0
+      post result >= 0
+   is
+      -- Multiply before dividing, or integer division takes everything.
+      return load * 100 / limit;
+   end;
+
+end; -- class SAFETY_HARNESS

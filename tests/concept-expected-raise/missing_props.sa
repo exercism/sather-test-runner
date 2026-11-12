@@ -1,0 +1,21 @@
+class MISSING_PROPS is
+
+   count_of(props : FMAP{STR,INT}, prop : STR) : INT is
+      if ~props.has_ind(prop) then
+         -- Nought would say "we have none", which is a different thing.
+         raise "Unknown prop: " + prop;
+      end;
+      return props.get(prop);
+   end;
+
+   take_one(props : FMAP{STR,INT}, prop : STR) : INT is
+      have ::= count_of(props, prop);
+      -- Planted defect: running out is not treated as an error, so the
+      -- count goes to zero instead of raising "Out of ...".
+      if have = 0 then
+         return 0;
+      end;
+      return have - 1;
+   end;
+
+end; -- class MISSING_PROPS

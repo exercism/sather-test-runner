@@ -1,0 +1,31 @@
+{
+  "version": 3,
+  "status": "fail",
+  "tests": [
+    {
+      "name": "two crowns",
+      "status": "pass",
+      "test_code": "props ::= #FMAP{STR,INT};\nprops := props.insert(\"crown\", 2);\nprops := props.insert(\"lantern\", 0);\ntest(\"two crowns\", MISSING_PROPS::count_of(props, \"crown\"), 2);",
+      "task_id": 1
+    },
+    {
+      "name": "an unknown prop raises",
+      "status": "pass",
+      "test_code": "protect\n   ignored ::= MISSING_PROPS::count_of(props, \"sword\");\n   test(\"an unknown prop raises\",\n        \"no exception raised\", \"Unknown prop: sword\");\nwhen $STR then\n   test(\"an unknown prop raises\",\n        exception.str, \"Unknown prop: sword\");\nend;",
+      "task_id": 1
+    },
+    {
+      "name": "taking a crown",
+      "status": "pass",
+      "test_code": "test(\"taking a crown\", MISSING_PROPS::take_one(props, \"crown\"), 1);",
+      "task_id": 2
+    },
+    {
+      "name": "taking what has run out raises",
+      "status": "fail",
+      "message": "expected: Out of lantern\nactual:   no exception raised",
+      "test_code": "protect\n   ignored ::= MISSING_PROPS::take_one(props, \"lantern\");\n   test(\"taking what has run out raises\",\n        \"no exception raised\", \"Out of lantern\");\nwhen $STR then\n   test(\"taking what has run out raises\",\n        exception.str, \"Out of lantern\");\nend;",
+      "task_id": 2
+    }
+  ]
+}

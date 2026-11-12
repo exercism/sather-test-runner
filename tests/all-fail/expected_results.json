@@ -5,17 +5,20 @@
     {
       "name": "a word",
       "status": "fail",
-      "message": "expected: tobor\nactual:   robot"
+      "message": "expected: tobor\nactual:   robot",
+      "test_code": "test(\"a word\", ALL_FAIL::reverse(\"robot\"), \"tobor\");"
     },
     {
       "name": "a capitalized word",
       "status": "fail",
-      "message": "expected: nemaR\nactual:   Ramen"
+      "message": "expected: nemaR\nactual:   Ramen",
+      "test_code": "test(\"a capitalized word\", ALL_FAIL::reverse(\"Ramen\"), \"nemaR\");"
     },
     {
       "name": "a sentence with punctuation",
       "status": "fail",
-      "message": "expected: !yrgnuh m'I\nactual:   I'm hungry!"
+      "message": "expected: !yrgnuh m'I\nactual:   I'm hungry!",
+      "test_code": "test(\"a sentence with punctuation\", ALL_FAIL::reverse(\"I'm hungry!\"), \"!yrgnuh m'I\");"
     }
   ]
 }

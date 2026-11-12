@@ -1,0 +1,38 @@
+class LOST_BOX{T < $STR} is
+
+   attr item : T;
+   readonly attr handed_in_by : STR;
+   readonly attr claimed : BOOL;
+
+   create(thing : T, who : STR) : SAME
+      post ~result.claimed and result.handed_in_by = who
+   is
+      box ::= new;
+      box.item := thing;
+      box.handed_in_by := who;
+      -- claimed is left alone: a BOOL attribute starts false.
+      return box;
+   end;
+
+   claim
+      post claimed
+   is
+      claimed := true;
+   end;
+
+   waiting : BOOL
+      post result = ~claimed
+   is
+      -- Planted defect: the negation is missing, which the postcondition
+      -- catches the first time waiting is asked.
+      return claimed;
+   end;
+
+   replace(thing : T) : T is
+      -- Keep the old one before overwriting, or it is gone.
+      was ::= item;
+      item := thing;
+      return was;
+   end;
+
+end; -- class LOST_BOX{T}

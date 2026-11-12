@@ -4,21 +4,25 @@
   "tests": [
     {
       "name": "the sound for 3 is Pling",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"the sound for 3 is Pling\", PARTIAL_FAIL::convert(3), \"Pling\");"
     },
     {
       "name": "the sound for 5 is Plang",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"the sound for 5 is Plang\", PARTIAL_FAIL::convert(5), \"Plang\");"
     },
     {
       "name": "the sound for 28 is Plong",
       "status": "fail",
-      "message": "expected: Plong\nactual:   28"
+      "message": "expected: Plong\nactual:   28",
+      "test_code": "test(\"the sound for 28 is Plong\", PARTIAL_FAIL::convert(28), \"Plong\");"
     },
     {
       "name": "the sound for 105 uses all three",
       "status": "fail",
-      "message": "expected: PlingPlangPlong\nactual:   PlingPlang"
+      "message": "expected: PlingPlangPlong\nactual:   PlingPlang",
+      "test_code": "test(\"the sound for 105 uses all three\", PARTIAL_FAIL::convert(105), \"PlingPlangPlong\");"
     }
   ]
 }

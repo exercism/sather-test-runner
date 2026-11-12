@@ -1,0 +1,30 @@
+{
+  "version": 3,
+  "status": "pass",
+  "tests": [
+    {
+      "name": "three markers a hundred apart",
+      "status": "pass",
+      "test_code": "markers ::= #FSTR;\nloop markers := markers + BUSH_WALK::markers!(100, 3) + \" \"; end;\ntest(\"three markers a hundred apart\",\n     markers.str, \"100 200 300 \");",
+      "task_id": 1
+    },
+    {
+      "name": "no markers at all",
+      "status": "pass",
+      "test_code": "none ::= #FSTR;\nloop none := none + BUSH_WALK::markers!(100, 0) + \" \"; end;\ntest(\"no markers at all\", none.str, \"\");",
+      "task_id": 1
+    },
+    {
+      "name": "stops at the end and does not give it",
+      "status": "pass",
+      "test_code": "stopped ::= #FSTR;\nloop\n   stopped := stopped\n      + BUSH_WALK::until_end!(|\"gum\", \"wattle\", \"end\", \"banksia\"|)\n      + \" \";\nend;\ntest(\"stops at the end and does not give it\",\n     stopped.str, \"gum wattle \");",
+      "task_id": 2
+    },
+    {
+      "name": "gives everything when there is no end",
+      "status": "pass",
+      "test_code": "no_end ::= #FSTR;\nloop\n   no_end := no_end\n      + BUSH_WALK::until_end!(|\"gum\", \"wattle\"|) + \" \";\nend;\ntest(\"gives everything when there is no end\",\n     no_end.str, \"gum wattle \");",
+      "task_id": 2
+    }
+  ]
+}

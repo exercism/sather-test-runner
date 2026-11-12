@@ -1,0 +1,44 @@
+-- Test-runner scenario, maintained by hand; based on the track's
+-- missing-props concept exercise, cut down to two tasks. take_one should
+-- raise when a prop has run out, and does not. A test of an expected
+-- exception is one protect block with a test( in each arm; it must be
+-- reported once, with the whole block as its test_code: in task 1 as a
+-- pass, in task 2 as a failure.
+
+class CONCEPT_EXPECTED_RAISE_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("MISSING_PROPS");
+
+      -- Task 1
+      props ::= #FMAP{STR,INT};
+      props := props.insert("crown", 2);
+      props := props.insert("lantern", 0);
+
+      test("two crowns", MISSING_PROPS::count_of(props, "crown"), 2);
+
+      protect
+         ignored ::= MISSING_PROPS::count_of(props, "sword");
+         test("an unknown prop raises",
+              "no exception raised", "Unknown prop: sword");
+      when $STR then
+         test("an unknown prop raises",
+              exception.str, "Unknown prop: sword");
+      end;
+
+      -- Task 2
+      test("taking a crown", MISSING_PROPS::take_one(props, "crown"), 1);
+
+      protect
+         ignored ::= MISSING_PROPS::take_one(props, "lantern");
+         test("taking what has run out raises",
+              "no exception raised", "Out of lantern");
+      when $STR then
+         test("taking what has run out raises",
+              exception.str, "Out of lantern");
+      end;
+
+      finish;
+   end;
+end; -- class CONCEPT_EXPECTED_RAISE_TEST

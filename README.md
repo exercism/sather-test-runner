@@ -4,70 +4,67 @@ The Docker image to automatically run tests on Sather solutions submitted to [Ex
 
 ## How it works
 
-Sather solutions are compiled with GNU Sather 1.2.2 (`sacomp`) and run with
-full runtime checking (`-chk`), so a failed assertion, a void access or an
-arithmetic overflow surfaces as a named Sather error rather than undefined
-behaviour.
+Sather solutions are compiled with GNU Sather 1.2.2 (`sacomp`) and run with full runtime checking (`-chk`), so a failed assertion, a void access or an arithmetic overflow surfaces as a named Sather error rather than undefined behaviour.
 
-Each exercise ships a test file (`<exercise>_test.sa`) and the shared harness
-(`exercism_test.sa`). The harness keeps the idiomatic Sather test API —
-`class_name`, `test`, `finish` — and additionally writes one machine-readable
-record per test to stderr. The runner compiles everything, executes the test
-program, and turns those records into an interface-version-3 `results.json`:
+Each exercise ships a test file (`<exercise>_test.sa`) and the shared harness (`exercism_test.sa`).
+The harness keeps the idiomatic Sather test API — `class_name`, `test`, `finish` — and additionally writes one machine-readable record per test to stderr.
+The runner compiles everything, executes the test program, and turns those records into an interface-version-3 `results.json`:
 
 1. `bin/run.sh` stages the solution, compiles it with `sacomp -chk`, and runs it.
 2. `bin/records-to-json.awk` parses the record stream on stderr.
-3. `jq` assembles `results.json`.
+3. `bin/extract-tests.awk` lists the tests the test file contains, with each one's `test_code` and `task_id`.
+4. `jq` lines the two lists up and assembles `results.json`.
 
-The human-readable test report stays on stdout; only stderr is parsed, so a
-solution printing record-shaped text cannot manufacture results.
+The running program cannot report its own source, and cannot report tests it never reached, so both come from reading the test file:
+
+- **`task_id`**: a comment line `-- Task N` in `main` links every test after it to task `N`, up to the next such comment.
+  Practice exercises have none, and their tests have no `task_id`.
+- **`test_code`**: a test is the statement that calls `test(`, together with the statements since the previous test (the setup that builds its value).
+  A `protect ... when $STR then ... end;` block with a `test(` in each arm is one test.
+  Blank lines and whole-line comments are left out.
+- **Tests a crash kept from running**: a raise nobody catches, or a failed precondition, postcondition, invariant or bounds check, ends the program.
+  The first listed test the program never reported is the one it stopped in.
+  It is reported as an `error` carrying the runtime error, and every test after it is an `error` that did not run.
+  So a concept exercise whose final task is still the stub's `raise "unimplemented";` shows tasks 1 to N-1 and a failing task N.
+
+If the reported names are not exactly the first names in the file (for example a name built at runtime), the runner trusts the program and reports what ran, without `test_code`.
+
+The human-readable test report stays on stdout; only stderr is parsed, so a solution printing record-shaped text cannot manufacture results.
 
 ## The Sather toolchain
 
 The Dockerfile:
 
-- fetches `sather-1.2.2.tar.bz2` from [ftp.gnu.org][gnu-sather] over HTTPS,
-  verified against a pinned SHA-256 digest;
+- fetches `sather-1.2.2.tar.bz2` from [ftp.gnu.org][gnu-sather] over HTTPS, verified against a pinned SHA-256 digest;
 - applies the two small patches in [`patches/`](patches/):
-  - `int-is-32-bits.patch` — Sather's `INT` must be exactly 32 bits (the
-    library hardcodes `asize := 32`); the type is now selected by range from
-    `<limits.h>` instead of "`long` except on ALPHA", which broke on LP64 hosts;
-  - `preprocess-config-freestanding.patch` — one flag so a modern C
-    preprocessor does not corrupt the generated compiler configuration;
-- deletes the 2005-vintage 32-bit objects the tarball ships, so the bootstrap
-  builds from the shipped C sources;
-- uses the Linux distribution's Boehm collector (`libgc-dev`) — the `gc4.14`
-  tarball GNU published alongside Sather predates x86-64 entirely;
-- runs the distribution's own library test suite, compiled with `-chk`,
-  before the image is allowed to build.
+  - `int-is-32-bits.patch` — Sather's `INT` must be exactly 32 bits (the library hardcodes `asize := 32`); the type is now selected by range from `<limits.h>` instead of "`long` except on ALPHA", which broke on LP64 hosts;
+  - `preprocess-config-freestanding.patch` — one flag so a modern C preprocessor does not corrupt the generated compiler configuration;
+- deletes the 2005-vintage 32-bit objects the tarball ships, so the bootstrap builds from the shipped C sources;
+- uses the Linux distribution's Boehm collector (`libgc-dev`) — the `gc4.14` tarball GNU published alongside Sather predates x86-64 entirely;
+- runs the distribution's own library test suite, compiled with `-chk`, before the image is allowed to build.
 
 ## Testing your solutions locally
 
-You do not need to build the Sather compiler yourself. If you have Docker,
-this repository is a working local test environment:
+You do not need to build the Sather compiler yourself.
+If you have Docker, this repository is a working local test environment:
 
 1. Clone this repository and open a terminal in its root
 2. Run `./bin/run-in-docker.sh <exercise-slug> <solution-dir> <output-dir>`
 
-The first run builds the image (a few minutes); later runs are fast. Results
-are written to `<output-dir>/results.json`, and the readable test report is
-printed while the tests run.
+The first run builds the image (a few minutes); later runs are fast.
+Results are written to `<output-dir>/results.json`, and the readable test report is printed while the tests run.
 
 ## Run the test runner
 
 To run the tests of a single solution without Docker, do the following:
 
-1. Build the patched compiler (see the Dockerfile for the steps) and set
-   `SATHER_HOME` to it, with `$SATHER_HOME/Bin` on your `PATH`
+1. Build the patched compiler (see the Dockerfile for the steps) and set `SATHER_HOME` to it, with `$SATHER_HOME/Bin` on your `PATH`
 2. Open a terminal in the project's root
 3. Run `./bin/run.sh <exercise-slug> <solution-dir> <output-dir>`
 
 Once the test runner has finished, its results will be written to `<output-dir>/results.json`.
 
-Behaviour can be tuned through environment variables: `COMPILE_TIMEOUT` and
-`RUN_TIMEOUT` (seconds), `MAX_MESSAGE_BYTES` (cap on the `message` field of
-`results.json`) and `MAX_OUTPUT_BYTES` (cap on any file the test program
-writes).
+Behaviour can be tuned through environment variables: `COMPILE_TIMEOUT` and `RUN_TIMEOUT` (seconds), `MAX_MESSAGE_BYTES` (cap on the `message` field of `results.json`) and `MAX_OUTPUT_BYTES` (cap on any file the test program writes).
 
 ## Run the test runner on a solution using Docker
 
@@ -87,7 +84,8 @@ To run the tests to verify the behavior of the test runner, do the following:
 1. Open a terminal in the project's root
 2. Run `./bin/run-tests.sh`
 
-These are [golden tests][golden] that compare the `results.json` generated by running the current state of the code against the "known good" `tests/<test-name>/expected_results.json`. All files created during the test run itself are discarded.
+These are [golden tests][golden] that compare the `results.json` generated by running the current state of the code against the "known good" `tests/<test-name>/expected_results.json`.
+All files created during the test run itself are discarded.
 
 When you've made modifications to the code that will result in a new "golden" state, you'll need to update the affected `tests/<test-name>/expected_results.json` file(s).
 
@@ -100,7 +98,8 @@ To run the tests to verify the behavior of the test runner using the Docker imag
 1. Open a terminal in the project's root
 2. Run `./bin/run-tests-in-docker.sh`
 
-These are [golden tests][golden] that compare the `results.json` generated by running the current state of the code against the "known good" `tests/<test-name>/expected_results.json`. All files created during the test run itself are discarded.
+These are [golden tests][golden] that compare the `results.json` generated by running the current state of the code against the "known good" `tests/<test-name>/expected_results.json`.
+All files created during the test run itself are discarded.
 
 ## Benchmarking
 
