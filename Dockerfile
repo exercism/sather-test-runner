@@ -21,8 +21,7 @@ RUN apt-get update && \
         libc6-dev \
         libgc-dev \
         make \
-        patch && \
-    rm -rf /var/lib/apt/lists/*
+        patch
 
 # ftp.gnu.org serves the archive over HTTPS, and the pinned digest makes
 # the build fail loudly if the served bytes ever change. (GNU also
@@ -31,8 +30,7 @@ ADD --checksum=sha256:75a94e3f07eccf45f8476cd074dc6ed3d1648b77006776cd44c856b777
     https://ftp.gnu.org/gnu/sather/sather-1.2.2.tar.bz2 /tmp/sather-1.2.2.tar.bz2
 
 RUN tar -xjf /tmp/sather-1.2.2.tar.bz2 -C /opt && \
-    mv /opt/sather-1.2.2 /opt/sather && \
-    rm /tmp/sather-1.2.2.tar.bz2
+    mv /opt/sather-1.2.2 /opt/sather
 
 WORKDIR /opt/sather
 COPY patches/ /tmp/patches/
@@ -121,6 +119,5 @@ ENV PATH="/opt/sather/Bin:${PATH}"
 
 WORKDIR /opt/test-runner
 COPY . .
-RUN chmod +x bin/run.sh bin/records-to-json.awk
 
 ENTRYPOINT ["/opt/test-runner/bin/run.sh"]

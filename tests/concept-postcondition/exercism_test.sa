@@ -1,0 +1,71 @@
+partial class EXERCISM_TEST is
+
+   include TEST
+      test       -> lib_test,
+      class_name -> lib_class_name,
+      finish     -> lib_finish;
+
+   private shared ex_count    : INT;
+   private shared ex_failures : INT;
+
+   private escape(s : STR) : STR is
+      -- Make `s' safe to place in one '|'-separated record field.
+      if void(s) then return "" end;
+      r : FSTR := #FSTR(s.size + 8);
+      loop
+         c ::= s.elt!;
+         case c
+         when '\\' then r := r + "\\\\";
+         when '|'  then r := r + "\\p";
+         when '\n' then r := r + "\\n";
+         when '\r' then r := r + "\\r";
+         else           r := r + c;
+         end;
+      end;
+      return r.str;
+   end;
+
+   private emit(name, status, expected, actual : STR) is
+      #ERR + "\n##EX|" + escape(name) + "|" + status + "|"
+           + escape(expected) + "|" + escape(actual) + "|##\n";
+   end;
+
+   class_name(nm : STR) is
+      -- Name the class under test. Must be called before any test.
+      ex_count := 0;
+      ex_failures := 0;
+      lib_class_name(nm);
+   end;
+
+   test(doc, does, should : $STR) is
+      -- Assert that `does' and `should' have the same string form.
+      -- A void `does' -- an unset attribute or an unwritten routine --
+      -- is a clean failure rather than a crash.
+      n ::= doc.str;
+      d : STR;
+      if void(does) then
+         d := "<void>";
+      else
+         d := does.str;
+      end;
+      s ::= should.str;
+      lib_test(n, d, s);
+      ex_count := ex_count + 1;
+      if d.is_eq(s) then
+         emit(n, "pass", s, d);
+      else
+         ex_failures := ex_failures + 1;
+         emit(n, "fail", s, d);
+      end;
+   end;
+
+   finish is
+      -- Print the summary, emit the trailing record, and set exit status.
+      lib_finish;
+      #ERR + "\n##EXDONE|" + ex_count + "|" + ex_failures + "|##\n";
+      if ex_failures > 0 then
+         UNIX::exit(1);
+      end;
+   end;
+
+end; -- class EXERCISM_TEST

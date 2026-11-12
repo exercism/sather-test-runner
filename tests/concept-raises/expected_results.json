@@ -1,0 +1,51 @@
+{
+  "version": 3,
+  "status": "fail",
+  "tests": [
+    {
+      "name": "a clear yes",
+      "status": "pass",
+      "test_code": "test(\"a clear yes\", CASTING_CALL::audition_outcome(9), \"Cast\");",
+      "task_id": 1
+    },
+    {
+      "name": "just short of being cast",
+      "status": "pass",
+      "test_code": "test(\"just short of being cast\",\n     CASTING_CALL::audition_outcome(7), \"Recalled\");",
+      "task_id": 1
+    },
+    {
+      "name": "the last of the juniors",
+      "status": "pass",
+      "test_code": "test(\"the last of the juniors\", CASTING_CALL::age_group(12), \"Juniors\");",
+      "task_id": 2
+    },
+    {
+      "name": "the first of the middles",
+      "status": "pass",
+      "test_code": "test(\"the first of the middles\", CASTING_CALL::age_group(13), \"Middles\");",
+      "task_id": 2
+    },
+    {
+      "name": "juniors come back first",
+      "status": "error",
+      "message": "The test program stopped while running this test; later tests did not run.\n\nUncaught STR exception: unimplemented\ntimeout: the monitored command dumped core",
+      "test_code": "test(\"juniors come back first\",\n     CASTING_CALL::callback_time(\"Juniors\"), \"4pm\");",
+      "task_id": 3
+    },
+    {
+      "name": "middles come back next",
+      "status": "error",
+      "message": "Not run: an earlier test stopped the test program.",
+      "test_code": "test(\"middles come back next\",\n     CASTING_CALL::callback_time(\"Middles\"), \"5pm\");",
+      "task_id": 3
+    },
+    {
+      "name": "seniors come back last",
+      "status": "error",
+      "message": "Not run: an earlier test stopped the test program.",
+      "test_code": "test(\"seniors come back last\",\n     CASTING_CALL::callback_time(\"Seniors\"), \"6pm\");",
+      "task_id": 3
+    }
+  ]
+}

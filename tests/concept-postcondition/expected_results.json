@@ -1,0 +1,58 @@
+{
+  "version": 3,
+  "status": "fail",
+  "tests": [
+    {
+      "name": "what is in the box",
+      "status": "pass",
+      "test_code": "box ::= #LOST_BOX{STR}(\"blue jumper\", \"Mia\");\ntest(\"what is in the box\", box.item, \"blue jumper\");",
+      "task_id": 1
+    },
+    {
+      "name": "nobody has claimed it",
+      "status": "pass",
+      "test_code": "test(\"nobody has claimed it\", box.claimed, false);",
+      "task_id": 1
+    },
+    {
+      "name": "now it is claimed",
+      "status": "pass",
+      "test_code": "other ::= #LOST_BOX{STR}(\"water bottle\", \"Lee\");\nbox.claim;\ntest(\"now it is claimed\", box.claimed, true);",
+      "task_id": 2
+    },
+    {
+      "name": "and its own claimed state",
+      "status": "pass",
+      "test_code": "test(\"and its own claimed state\", other.claimed, false);",
+      "task_id": 2
+    },
+    {
+      "name": "so it is no longer waiting",
+      "status": "error",
+      "message": "The test program stopped while running this test; later tests did not run.\n\nRuntime error - Violation of postcondition\nin LOST_BOX{STR}::waiting:BOOL\nlost_property.sa:23:10\n(Use \"-debug\" to compile symbolic info)\ntimeout: the monitored command dumped core",
+      "test_code": "test(\"so it is no longer waiting\", box.waiting, false);",
+      "task_id": 3
+    },
+    {
+      "name": "so it is still waiting",
+      "status": "error",
+      "message": "Not run: an earlier test stopped the test program.",
+      "test_code": "test(\"so it is still waiting\", other.waiting, true);",
+      "task_id": 3
+    },
+    {
+      "name": "replace answers what was there",
+      "status": "error",
+      "message": "Not run: an earlier test stopped the test program.",
+      "test_code": "was ::= box.replace(\"red jumper\");\ntest(\"replace answers what was there\", was, \"blue jumper\");",
+      "task_id": 4
+    },
+    {
+      "name": "and the box holds the new thing",
+      "status": "error",
+      "message": "Not run: an earlier test stopped the test program.",
+      "test_code": "test(\"and the box holds the new thing\", box.item, \"red jumper\");",
+      "task_id": 4
+    }
+  ]
+}

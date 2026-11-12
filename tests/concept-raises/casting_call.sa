@@ -1,0 +1,28 @@
+class CASTING_CALL is
+
+   audition_outcome(score : INT) : STR is
+      if score >= 8 then
+         return "Cast";
+      elsif score >= 5 then
+         return "Recalled";
+      else
+         return "Thank you";
+      end;
+   end;
+
+   age_group(age : INT) : STR is
+      if age < 13 then
+         return "Juniors";
+      elsif age < 16 then
+         return "Middles";
+      else
+         return "Seniors";
+      end;
+   end;
+
+   -- Still the stub the exercise ships with.
+   callback_time(group : STR) : STR is
+      raise "unimplemented";
+   end;
+
+end; -- class CASTING_CALL

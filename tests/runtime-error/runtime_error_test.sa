@@ -1,7 +1,8 @@
 -- Test-runner scenario, maintained by hand; the exercise is a
 -- binary-search variant. The first five tests pass, the sixth dies with
 -- a runtime error, and the last never runs: the runner must report the
--- tests that did run and say that the suite stopped early.
+-- sixth as an error carrying the runtime error, and the last as an error
+-- that did not run.
 
 class RUNTIME_ERROR_TEST is
    include EXERCISM_TEST;

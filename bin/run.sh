@@ -34,15 +34,11 @@ export SATHER_HOME
 : "${RUN_TIMEOUT:=15}"
 
 # Cap on the message field of results.json.
-: "${MAX_MESSAGE_BYTES:=65536}"
+: "${MAX_MESSAGE_BYTES:=65535}"
 
 # Cap on any single file the test program writes, enforced with ulimit so a
 # print loop hits a limit rather than filling the tmpfs.
 : "${MAX_OUTPUT_BYTES:=8388608}"
-
-runner_dir=$(dirname "$(realpath "$0")")
-records_to_json="${runner_dir}/records-to-json.awk"
-bundled_harness="${runner_dir}/../harness/exercism_test.sa"
 
 usage() {
     echo "usage: $0 exercise-slug path/to/solution/folder/ path/to/output/directory/" >&2
@@ -61,10 +57,10 @@ mkdir -p "${output_dir}"
 results_file="${output_dir}/results.json"
 snake_slug="${slug//-/_}"
 
-# Assigned before use so the trap can always expand them.
+# Assigned before die can run, so it can always expand them; build_dir is
+# created in main.
 work_dir=""
 build_dir=""
-trap 'rm -rf "${work_dir}" "${build_dir}"' EXIT
 
 # A fault in the runner itself is still reported through results.json when
 # possible: an empty output directory tells the platform nothing.
@@ -84,7 +80,7 @@ capped() {
     local file="$1"
     head -c "${MAX_MESSAGE_BYTES}" "${file}"
     if (( $(wc -c < "${file}") > MAX_MESSAGE_BYTES )); then
-        printf '\n[output truncated]'
+        printf '\n[output truncated]\n'
     fi
 }
 
@@ -93,15 +89,26 @@ capped() {
 finish_with() {
     local status="$1" message_file="$2"
     if ! grep -q '[^[:space:]]' "${message_file}" 2>/dev/null; then
-        printf 'the test run produced no output\n' > "${message_file}"
+        printf 'The test run produced no output.\n' > "${message_file}"
     fi
     capped "${message_file}" > "${message_file}.capped"
     jq -n --arg status "${status}" --rawfile message "${message_file}.capped" \
         '{version: 3, status: $status,
-          message: ($message | sub("^\n+"; "") | rtrimstr("\n"))}' \
+          message: ($message | sub("^\n+"; "") | sub("\\s+$"; ""))}' \
         > "${results_file}"
     echo "${slug}: done"
 }
+
+work_dir=$(mktemp -d) || die "Cannot create a work directory."
+trap 'rm -rf "${work_dir}" "${build_dir}"' EXIT
+
+runner_dir=$(dirname "$(realpath "$0")")
+records_to_json="${runner_dir}/records-to-json.awk"
+extract_tests="${runner_dir}/extract-tests.awk"
+bundled_harness="${runner_dir}/../harness/exercism_test.sa"
+for runner_file in "${records_to_json}" "${extract_tests}" "${bundled_harness}"; do
+    [[ -f "${runner_file}" ]] || die "The test runner is missing ${runner_file}."
+done
 
 # The compiled test program has to run from the build directory, and in
 # production the container filesystem is read-only with /tmp a noexec
@@ -118,9 +125,6 @@ allows_exec() {
 }
 
 main() {
-    [[ -f "${records_to_json}" ]] || die "missing ${records_to_json}"
-    work_dir=$(mktemp -d) || die "cannot create a work directory"
-
     echo "${slug}: testing..."
 
     # Building needs a directory that is writable and executable. The work
@@ -135,7 +139,7 @@ main() {
         fi
     done
     if [[ -z "${build_dir}" || ! -d "${build_dir}" ]]; then
-        printf 'no writable directory that permits execution was found;\ntried under /tmp, the output directory and the solution directory\n' \
+        printf 'No writable directory that permits execution was found.\nTried /tmp, the output directory and the solution directory.\n' \
             > "${work_dir}/message"
         finish_with error "${work_dir}/message"
         return 0
@@ -151,33 +155,29 @@ main() {
     tar -C "${solution_dir}" \
         --exclude='./.sather-build.*' --exclude='./.tests*' \
         -cf - . | tar -C "${build_dir}" -xf - \
-        || die "cannot stage the solution"
-    cd "${build_dir}" || die "cannot enter the build directory"
+        || die "Cannot stage the solution."
+    cd "${build_dir}" || die "Cannot enter the build directory."
 
-    # The test file is normally named after the slug. Fall back to any
-    # *_test.sa so a hand-assembled solution still works;
-    # exercism_test.sa is the harness, not a test.
+    # The track config names the test file: "%{snake_slug}_test.sa".
     local tests_file="${snake_slug}_test.sa"
     if [[ ! -f "${tests_file}" ]]; then
-        tests_file=""
-        local sa
-        for sa in *_test.sa; do
-            [[ -f "${sa}" && "${sa}" != exercism_test.sa ]] || continue
-            tests_file="${sa}"
-            break
-        done
-    fi
-    if [[ -z "${tests_file}" ]]; then
-        printf 'no test file found (expected %s_test.sa)\n' "${snake_slug}" \
+        printf 'The test file %s was not found.\n' "${tests_file}" \
             > "${work_dir}/message"
         finish_with error "${work_dir}/message"
         return 0
     fi
 
+    # The tests as the test file lists them: test_code and task_id come
+    # from here, and so do the names of tests a crash kept from running.
+    # A file the extractor cannot read yields an empty list, and the
+    # results then fall back to what the program reported.
+    gawk -f "${extract_tests}" < "${tests_file}" > "${work_dir}/static.jsonl" \
+        2>/dev/null || : > "${work_dir}/static.jsonl"
+
     # The harness ships with each exercise as an editor file; the copy in
     # the image covers a solution assembled without one.
     if [[ ! -f exercism_test.sa ]]; then
-        cp "${bundled_harness}" exercism_test.sa || die "cannot stage the harness"
+        cp "${bundled_harness}" exercism_test.sa || die "Cannot stage the harness."
     fi
 
     # The main class is named after the test file, so the two cannot
@@ -203,7 +203,7 @@ main() {
     # executable rather than trusting the exit status.
     if [[ ! -x ./.tests ]]; then
         if (( compile_status == 124 )); then
-            printf '\ncompilation timed out after %s seconds\n' \
+            printf '\nCompilation timed out after %d seconds.\n' \
                 "${COMPILE_TIMEOUT}" >> "${work_dir}/compile"
         fi
         finish_with error "${work_dir}/compile"
@@ -220,7 +220,7 @@ main() {
             > "${work_dir}/report" 2> "${work_dir}/records"
     )
     if (( $? == 124 )); then
-        printf '\nthe tests timed out after %s seconds\n' "${RUN_TIMEOUT}" \
+        printf '\nThe tests timed out after %d seconds.\n' "${RUN_TIMEOUT}" \
             >> "${work_dir}/report"
     fi
 
@@ -231,9 +231,9 @@ main() {
     # should see, alongside the report.
     grep -v '^##EX' "${work_dir}/records" >> "${work_dir}/report" || true
 
-    local n_tests=0 n_failures=0 finished=false
+    local n_tests=0 finished=false
     if [[ -s "${work_dir}/summary" ]]; then
-        read -r n_tests n_failures finished < <(
+        read -r n_tests _ finished < <(
             jq -r '"\(.tests) \(.failures) \(.finished)"' "${work_dir}/summary")
     fi
 
@@ -244,27 +244,58 @@ main() {
         return 0
     fi
 
-    if [[ "${finished}" != true ]]; then
-        # Tests were reported but the terminating record never came: the
-        # run stopped early, and silence about that would read as success.
-        capped "${work_dir}/report" > "${work_dir}/report.capped"
-        jq -n --rawfile message "${work_dir}/report.capped" \
-              --slurpfile tests "${work_dir}/tests.jsonl" \
-            '{version: 3, status: "fail",
-              message: ("the test program stopped before the suite finished; later tests did not run\n\n"
-                        + ($message | sub("^\n+"; "") | rtrimstr("\n"))),
-              tests: $tests}' \
-            > "${results_file}" || die "cannot encode the test results"
-        echo "${slug}: done"
-        return 0
+    capped "${work_dir}/report" > "${work_dir}/report.capped"
+    if ! grep -q '[^[:space:]]' "${work_dir}/report.capped"; then
+        printf 'The test program produced no output.\n' > "${work_dir}/report.capped"
     fi
 
-    local status=pass
-    (( n_failures > 0 )) && status=fail
-
-    jq -n --arg status "${status}" --slurpfile tests "${work_dir}/tests.jsonl" \
-        '{version: 3, status: $status, tests: $tests}' \
-        > "${results_file}" || die "cannot encode the test results"
+    # Line the reported tests up against the test file. When the reported
+    # names are exactly the first tests of the file, each gains its
+    # test_code and task_id; if the run stopped early, the first test the
+    # program never reported is the one it stopped in, and the rest never
+    # ran. When they do not line up (a name built at runtime, a file the
+    # extractor misread), the reported tests stand alone, as they are.
+    # Field order is fixed so the output is stable.
+    jq -n --argjson finished "${finished}" \
+          --rawfile report "${work_dir}/report.capped" \
+          --slurpfile static "${work_dir}/static.jsonl" \
+          --slurpfile tests "${work_dir}/tests.jsonl" '
+        ($report | sub("^\n+"; "") | sub("\\s+$"; "")) as $report
+        | ($tests | length) as $ran
+        | ($static | length) as $listed
+        | (($static[0:$ran] | map(.name)) == ($tests | map(.name))
+           and (if $finished then $listed == $ran else $listed > $ran end))
+          as $aligned
+        | if $aligned then
+            [ $static | to_entries[] | .key as $i | .value as $s
+              | (if $i < $ran then $tests[$i]
+                 elif $i == $ran then
+                   {name: $s.name, status: "error",
+                    message: ("The test program stopped while running this test; later tests did not run.\n\n" + $report)}
+                 else
+                   {name: $s.name, status: "error",
+                    message: "Not run: an earlier test stopped the test program."}
+                 end)
+              | {name, status} + (if .message then {message} else {} end)
+                + {test_code: $s.test_code}
+                + (if $s.task_id then {task_id: $s.task_id} else {} end) ]
+            | {version: 3,
+               status: (if all(.[]; .status == "pass") then "pass" else "fail" end),
+               tests: .}
+          elif $finished then
+            {version: 3,
+             status: (if all($tests[]; .status == "pass") then "pass" else "fail" end),
+             tests: $tests}
+          else
+            # Tests were reported but the terminating record never came:
+            # the run stopped early, and silence about that would read as
+            # success.
+            {version: 3, status: "fail",
+             message: ("The test program stopped before the suite finished; later tests did not run.\n\n"
+                       + $report),
+             tests: $tests}
+          end' \
+        > "${results_file}" || die "Cannot encode the test results."
     echo "${slug}: done"
 }
 

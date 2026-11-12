@@ -1,0 +1,25 @@
+-- Test-runner scenario, maintained by hand; based on the track's
+-- warm-up-laps concept exercise, cut down to two tasks. The test file is
+-- named after the exercise it came from, not after this scenario's slug,
+-- so the runner, which follows the track config's %{snake_slug}_test.sa,
+-- must report missing_test_file_test.sa as not found rather than pick up
+-- this file or any other *_test.sa.
+
+class WARM_UP_LAPS_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("WARM_UP_LAPS");
+
+      -- Task 1
+      test("no laps at all", WARM_UP_LAPS::distance_run(0), 0);
+      test("two laps", WARM_UP_LAPS::distance_run(2), 210);
+
+      -- Task 2
+      test("exactly one lap", WARM_UP_LAPS::laps_to_reach(100), 1);
+      test("one metre more than one lap",
+           WARM_UP_LAPS::laps_to_reach(101), 2);
+
+      finish;
+   end;
+end; -- class WARM_UP_LAPS_TEST

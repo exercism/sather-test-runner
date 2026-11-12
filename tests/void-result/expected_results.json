@@ -5,7 +5,8 @@
     {
       "name": "one giant leap",
       "status": "fail",
-      "message": "expected: One giant leap for mankind\nactual:   <void>"
+      "message": "expected: One giant leap for mankind\nactual:   <void>",
+      "test_code": "test(\"one giant leap\", VOID_RESULT::giant_leap, \"One giant leap for mankind\");"
     }
   ]
 }

@@ -1,0 +1,33 @@
+-- Test-runner scenario, maintained by hand; based on the track's
+-- casting-call concept exercise, cut down to three tasks. Tasks 1 and 2 are
+-- solved and the final task is still the stub's raise "unimplemented". The
+-- uncaught exception stops the program in the first task-3 test: that test
+-- is an error carrying the exception, and the rest of task 3 must still be
+-- listed, as not run.
+
+class CONCEPT_RAISES_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("CASTING_CALL");
+
+      -- Task 1
+      test("a clear yes", CASTING_CALL::audition_outcome(9), "Cast");
+      test("just short of being cast",
+           CASTING_CALL::audition_outcome(7), "Recalled");
+
+      -- Task 2
+      test("the last of the juniors", CASTING_CALL::age_group(12), "Juniors");
+      test("the first of the middles", CASTING_CALL::age_group(13), "Middles");
+
+      -- Task 3
+      test("juniors come back first",
+           CASTING_CALL::callback_time("Juniors"), "4pm");
+      test("middles come back next",
+           CASTING_CALL::callback_time("Middles"), "5pm");
+      test("seniors come back last",
+           CASTING_CALL::callback_time("Seniors"), "6pm");
+
+      finish;
+   end;
+end; -- class CONCEPT_RAISES_TEST

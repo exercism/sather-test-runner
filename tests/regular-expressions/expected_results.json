@@ -4,31 +4,38 @@
   "tests": [
     {
       "name": "four digits form a postcode",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"four digits form a postcode\", REGULAR_EXPRESSIONS::is_postcode(\"2530\"), true);"
     },
     {
       "name": "letters spoil a postcode",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"letters spoil a postcode\", REGULAR_EXPRESSIONS::is_postcode(\"25a0\"), false);"
     },
     {
       "name": "five digits are too many",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"five digits are too many\", REGULAR_EXPRESSIONS::is_postcode(\"25301\"), false);"
     },
     {
       "name": "sather has a vowel",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"sather has a vowel\", REGULAR_EXPRESSIONS::has_vowel(\"sather\"), true);"
     },
     {
       "name": "rhythm has none",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"rhythm has none\", REGULAR_EXPRESSIONS::has_vowel(\"rhythm\"), false);"
     },
     {
       "name": "all capitals is shouting",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"all capitals is shouting\", REGULAR_EXPRESSIONS::is_shouting(\"HEY\"), true);"
     },
     {
       "name": "mixed case is not",
-      "status": "pass"
+      "status": "pass",
+      "test_code": "test(\"mixed case is not\", REGULAR_EXPRESSIONS::is_shouting(\"Hey\"), false);"
     }
   ]
 }
