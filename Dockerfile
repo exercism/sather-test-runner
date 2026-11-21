@@ -2,8 +2,9 @@
 # tree into a slim runtime image.
 #
 # The sources are the pristine sather-1.2.2 tarball from ftp.gnu.org plus
-# the two small patches in patches/ that let it build and run correctly on
-# a modern 64-bit host; see patches/*.patch for the reasoning. The Boehm
+# the small patches in patches/: two let it build and run correctly on a
+# modern 64-bit host, and one fixes a parser bug that rejected
+# 'return bind(...)'. See patches/*.patch for the reasoning. The Boehm
 # collector comes from the Linux distribution: the gc4.14 tarball GNU shipped
 # alongside Sather predates x86-64 entirely.
 #

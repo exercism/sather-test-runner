@@ -1,0 +1,16 @@
+class RETURN_BIND_TEST is
+   include EXERCISM_TEST;
+
+   main is
+      class_name("RETURN_BIND");
+
+      test("return bind", RETURN_BIND::part_for("shout").call("Who's there"), "WHO'S THERE");
+      test("return bind in the other branch", RETURN_BIND::part_for("whisper").call("Who's there"), "who's there");
+
+      said ::= #FSTR;
+      loop said := said + RETURN_BIND::parts!.call("Hi") + " " end;
+      test("yield bind", said.str, "HI hi ");
+
+      finish;
+   end;
+end; -- class RETURN_BIND_TEST

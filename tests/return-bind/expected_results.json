@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "status": "pass",
+  "tests": [
+    {
+      "name": "return bind",
+      "status": "pass",
+      "test_code": "test(\"return bind\", RETURN_BIND::part_for(\"shout\").call(\"Who's there\"), \"WHO'S THERE\");"
+    },
+    {
+      "name": "return bind in the other branch",
+      "status": "pass",
+      "test_code": "test(\"return bind in the other branch\", RETURN_BIND::part_for(\"whisper\").call(\"Who's there\"), \"who's there\");"
+    },
+    {
+      "name": "yield bind",
+      "status": "pass",
+      "test_code": "said ::= #FSTR;\nloop said := said + RETURN_BIND::parts!.call(\"Hi\") + \" \" end;\ntest(\"yield bind\", said.str, \"HI hi \");"
+    }
+  ]
+}
