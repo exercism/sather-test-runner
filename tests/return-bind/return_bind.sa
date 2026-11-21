@@ -1,0 +1,26 @@
+class RETURN_BIND is
+
+   shout(line : STR) : STR is
+      return line.upper;
+   end;
+
+   whisper(line : STR) : STR is
+      return line.lower;
+   end;
+
+   -- The language allows bind(...) after return; the patched parser
+   -- accepts it.
+   part_for(style : STR) : ROUT{STR}:STR is
+      if style = "shout" then
+         return bind(shout(_));
+      end;
+      return bind(whisper(_));
+   end;
+
+   -- And after yield.
+   parts! : ROUT{STR}:STR is
+      yield bind(shout(_));
+      yield bind(whisper(_));
+   end;
+
+end; -- class RETURN_BIND

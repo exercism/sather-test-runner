@@ -1,0 +1,44 @@
+Let 'return' and 'yield' take a bind(...) expression
+
+The language manual gives
+
+    return_statement => return [ expression ]
+    yield_statement  => yield [ expression ]
+
+and lists closure creation, bind(...), among the expressions. But
+'return bind(f(_))' fails to parse:
+
+    'end' expected, but found 'bind' (in routine/iter body)
+
+return_stmt and yield_stmt in Compiler/Front/parse.sa only parse a
+value when is_expr_start(next) holds, and is_expr_start lists every
+token the primary expression parser accepts except bind_tok. bind was
+added in 1.1 to replace #ROUT(...) and #ITER(...), which start with
+sharp_tok and so were already covered; the list was not updated. Seeing
+no value, 'return' expects the statement to end and stops at 'bind'.
+
+Elsewhere bind(...) goes through the full expression parser, which is
+why it already works after ':=' or as an argument, and why writing
+'return (bind(f(_)))' works: lparen_tok is on the list.
+
+Adding bind_tok makes is_stmt_start accept it too, since that falls
+back to is_expr_start; a statement that is just a bind(...) is then
+rejected by the type checker, as any other value used as a statement
+is, instead of by the parser.
+
+--- a/Compiler/Front/parse.sa	2026-11-21 12:25:54.526583313 +1100
++++ b/Compiler/Front/parse.sa	2026-11-21 12:25:54.538966682 +1100
+@@ -1197,9 +1197,12 @@
+    end;
+ 
+    is_expr_start (t:TOKEN):BOOL is
++      -- Every token the primary expression parser accepts must be listed
++      -- here, or 'return' and 'yield' will not see that a value follows.
+       case t.val
+       when self_tok, ident_tok, bang_tok, iter_bang_tok, SAME_tok, void_tok,
+-         minus_tok, not_tok, new_tok, sharp_tok, vbar_tok, exception_tok, 
++         minus_tok, not_tok, new_tok, sharp_tok, bind_tok, vbar_tok,
++         exception_tok, 
+          initial_tok, result_tok, while_tok, until_tok, break_tok, 
+          true_tok, false_tok, lchar_tok, lstr_tok, lint_tok, lflt_tok, 
+          lparen_tok, lbracket_tok,
