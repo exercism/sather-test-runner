@@ -90,7 +90,8 @@ RUN apt-get update && \
         jq \
         libc6-dev \
         libgc-dev \
-        make && \
+        make \
+        tcc && \
     rm -rf /var/lib/apt/lists/* \
         /usr/libexec/gcc/x86_64-linux-gnu/13/lto1 \
         /usr/bin/x86_64-linux-gnu-lto-dump-13 \
@@ -114,6 +115,14 @@ RUN apt-get update && \
         /usr/lib/gcc/x86_64-linux-gnu/13/liblsan*
 
 COPY --from=build /opt/sather /opt/sather
+
+# Compiling the generated C with gcc took about half of each run. sacomp
+# now calls bin/cc, which compiles with tcc and falls back to gcc whenever
+# tcc fails.
+RUN sed -i 's|^C_COMPILER: "gcc ";|C_COMPILER: "/opt/test-runner/bin/cc ";|' \
+        /opt/sather/System/Common/CONFIG && \
+    grep -q '^C_COMPILER: "/opt/test-runner/bin/cc ";' \
+        /opt/sather/System/Common/CONFIG
 
 ENV SATHER_HOME=/opt/sather
 ENV PATH="/opt/sather/Bin:${PATH}"
