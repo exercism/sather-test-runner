@@ -1,0 +1,54 @@
+Keep the C library's isnormal and iszero
+
+The __linux__ branch of System/Common/runtime.h defines
+
+    #define iszero(f) ((f)==0.0)
+    #define isnormal(f) ((int)1)  /* these two are hacks esc*/
+
+but every generated C file includes <math.h> first, through c_header.h,
+and <math.h> has defined isnormal since C99 and iszero since C23.
+Redefining a standard macro is undefined behaviour. In practice the
+later definition wins, so FLTD::is_normal, which Library/Base/fltd.config
+compiles to isnormal($0), was true for every value: zero, the infinities
+and NaN included. The C compiler also warned that isnormal was
+redefined in every C file it compiled, which is most of what a student
+sees when their code fails in the C compiler or the linker.
+
+Define each stand-in only where the C library has not defined the name.
+With glibc, isnormal is now the real classification. iszero is only
+defined by <math.h> under C23 or _GNU_SOURCE; either way it means the
+same as the stand-in.
+
+issubnormal is not a standard name (C99 spells it fpclassify(x) ==
+FP_SUBNORMAL), so its stand-in is left as it is, and FLTD::is_subnormal
+is still always false. A real one needs to evaluate its argument once,
+and the generated code can pass it a call expression, so it is not part
+of this fix.
+
+--- a/System/Common/runtime.h
++++ b/System/Common/runtime.h
+@@ -174,9 +174,22 @@
+ #ifdef __linux__
+ # define FLTDEXP10(f)    pow(10.0,f)
+                          /* Change 990218, by Nobbi: pow10 not available */
+-#define iszero(f) ((f)==0.0)
++/* c_header.h includes <math.h> before this file, and <math.h> defines
++** isnormal from C99 on and iszero from C23 on. Redefining a standard
++** macro is undefined behaviour: in practice the definition here won, so
++** FLTD::is_normal was true for every value, zero, the infinities and NaN
++** included, and every generated C file drew a "redefined" warning. Keep
++** the C library's macro where there is one, and the stand-in otherwise.
++** issubnormal is not a standard name, so its stand-in is still used and
++** FLTD::is_subnormal is still always false.
++*/
++#ifndef iszero
++# define iszero(f) ((f)==0.0)
++#endif
+ /* static int ilogb(double f) { int i; frexp(f,&i); return i-1; } */
+-#define isnormal(f) ((int)1)  /* these two are hacks esc*/
++#ifndef isnormal
++# define isnormal(f) ((int)1)  /* these two are hacks esc*/
++#endif
+ #define issubnormal(f) ((int)0)
+ 
+ #elif defined(_AIX) || defined(SUNOS5) || defined(__NeXT__) || defined(__sgi) || defined(ALPHA) || defined(__hpux) || defined(__FreeBSD__) || defined(__alpha) || defined(__CYGWIN32__)
