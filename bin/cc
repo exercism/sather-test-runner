@@ -1,7 +1,0 @@
-#!/bin/sh
-# sacomp turns the program into C and runs make, which calls this script to
-# compile each C file and to link the test program. tcc compiles the
-# generated C several times faster than gcc. If tcc fails, gcc runs the same
-# command, so any compiler error a student sees still comes from gcc.
-tcc "$@" 2>/dev/null && exit 0
-exec gcc "$@"

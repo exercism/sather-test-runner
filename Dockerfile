@@ -75,54 +75,36 @@ RUN rm -rf Boot Browser Emacs Test debian Doxyfile Manifest \
 
 FROM ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517
 
-# sacomp emits C and shells out to make, so compiling a solution needs
-# gcc, make and the GC headers at runtime; gawk and jq turn the harness's
-# test records into results.json.
+# sacomp emits C and shells out to make, so compiling a solution needs a C
+# compiler, make, the libc headers and the GC headers at runtime; gawk and
+# jq turn the harness's test records into results.json.
 #
-# The toolchain is then trimmed of ~110MB it can never use: sacomp always
-# invokes gcc with the fixed options in System/Common/CONFIG, so the LTO
-# compiler, the sanitizer runtimes, the static libc, and the alternative
-# linker are all unreachable. cc1 and the shared libraries stay.
+# The C compiler is tcc. Compiling the generated C with gcc took about half
+# of each run, and tcc compiles it several times faster. tcc also links the
+# program itself, with its own libtcc1.a and the crt files from libc6-dev,
+# so the image needs neither gcc nor binutils. gcc stays in the build stage
+# above, which bootstraps Sather. tcc ignores the -O2 in CONFIG.
+#
+# The static libc archives are removed: nothing links statically, so they
+# can never be used.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         gawk \
-        gcc \
         jq \
         libc6-dev \
         libgc-dev \
         make \
         tcc && \
     rm -rf /var/lib/apt/lists/* \
-        /usr/libexec/gcc/x86_64-linux-gnu/13/lto1 \
-        /usr/bin/x86_64-linux-gnu-lto-dump-13 \
-        /usr/bin/x86_64-linux-gnu-ld.gold \
-        /usr/bin/x86_64-linux-gnu-dwp \
-        /usr/bin/x86_64-linux-gnu-gprofng* \
-        /usr/bin/gprofng* \
-        /usr/lib/x86_64-linux-gnu/libgprofng* \
-        /usr/lib/x86_64-linux-gnu/libasan.so* \
-        /usr/lib/x86_64-linux-gnu/libtsan.so* \
-        /usr/lib/x86_64-linux-gnu/libhwasan.so* \
-        /usr/lib/x86_64-linux-gnu/libubsan.so* \
-        /usr/lib/x86_64-linux-gnu/liblsan.so* \
         /usr/lib/x86_64-linux-gnu/libc.a \
         /usr/lib/x86_64-linux-gnu/libm-2.39.a \
-        /usr/lib/x86_64-linux-gnu/libmvec.a \
-        /usr/lib/gcc/x86_64-linux-gnu/13/libasan* \
-        /usr/lib/gcc/x86_64-linux-gnu/13/libtsan* \
-        /usr/lib/gcc/x86_64-linux-gnu/13/libhwasan* \
-        /usr/lib/gcc/x86_64-linux-gnu/13/libubsan* \
-        /usr/lib/gcc/x86_64-linux-gnu/13/liblsan*
+        /usr/lib/x86_64-linux-gnu/libmvec.a
 
 COPY --from=build /opt/sather /opt/sather
 
-# Compiling the generated C with gcc took about half of each run. sacomp
-# now calls bin/cc, which compiles with tcc and falls back to gcc whenever
-# tcc fails.
-RUN sed -i 's|^C_COMPILER: "gcc ";|C_COMPILER: "/opt/test-runner/bin/cc ";|' \
+RUN sed -i 's|^C_COMPILER: "gcc ";|C_COMPILER: "tcc ";|' \
         /opt/sather/System/Common/CONFIG && \
-    grep -q '^C_COMPILER: "/opt/test-runner/bin/cc ";' \
-        /opt/sather/System/Common/CONFIG
+    grep -q '^C_COMPILER: "tcc ";' /opt/sather/System/Common/CONFIG
 
 ENV SATHER_HOME=/opt/sather
 ENV PATH="/opt/sather/Bin:${PATH}"
