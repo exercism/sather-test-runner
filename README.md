@@ -36,7 +36,7 @@ The human-readable test report stays on stdout; only stderr is parsed, so a solu
 The Dockerfile:
 
 - fetches `sather-1.2.2.tar.bz2` from [ftp.gnu.org][gnu-sather] over HTTPS, verified against a pinned SHA-256 digest;
-- applies the four small patches in [`patches/`](patches/):
+- applies the patches in [`patches/`](patches/):
   - `int-is-32-bits.patch` — Sather's `INT` must be exactly 32 bits (the library hardcodes `asize := 32`); the type is now selected by range from `<limits.h>` instead of "`long` except on ALPHA", which broke on LP64 hosts;
   - `libc-isnormal-iszero.patch` — the runtime no longer redefines `isnormal` and `iszero` over `<math.h>`'s own macros, which made `FLTD::is_normal` true for zero, infinity and NaN, and drew a warning in every generated C file;
   - `preprocess-config-freestanding.patch` — one flag so a modern C preprocessor does not corrupt the generated compiler configuration;
