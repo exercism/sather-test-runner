@@ -3,7 +3,8 @@
 #
 # The sources are the pristine sather-1.2.2 tarball from ftp.gnu.org plus
 # the small patches in patches/: two let it build and run correctly on a
-# modern 64-bit host, and one fixes a parser bug that rejected
+# modern 64-bit host, one stops the runtime replacing the C library's
+# isnormal and iszero, and one fixes a parser bug that rejected
 # 'return bind(...)'. See patches/*.patch for the reasoning. The Boehm
 # collector comes from the Linux distribution: the gc4.14 tarball GNU shipped
 # alongside Sather predates x86-64 entirely.
@@ -58,8 +59,9 @@ RUN SATHER_HOME=/opt/sather make test && \
     ! grep -qi 'fail' Test/test-all.output
 
 # Prove a checked program builds and runs before shipping the tree,
-# including the 32-bit INT semantics the first patch exists for.
-RUN printf 'class SMOKE is\n main is\n  assert INT::asize = 32;\n  assert INT::maxint = 2147483647;\n  #OUT + "ok\\n";\n end;\nend;\n' > /tmp/smoke.sa && \
+# including the 32-bit INT semantics the first patch exists for and the
+# C library's isnormal.
+RUN printf 'class SMOKE is\n main is\n  assert INT::asize = 32;\n  assert INT::maxint = 2147483647;\n  assert (1.0d).is_normal;\n  assert ~(0.0d).is_normal;\n  assert ~FLTD::infinity.is_normal;\n  #OUT + "ok\\n";\n end;\nend;\n' > /tmp/smoke.sa && \
     SATHER_HOME=/opt/sather ./Bin/sacomp -chk /tmp/smoke.sa -main SMOKE -o /tmp/smoke && \
     /tmp/smoke | grep -qx ok
 
